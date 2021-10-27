@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="include\serial\impl\list_ports_linux.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="include\serial\impl\list_ports_osx.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="include\serial\impl\list_ports_win.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="include\serial\impl\serial.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="include\serial\impl\unix.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="include\serial\impl\win.cc">
+      <Filter>SerialPortLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp" />
+    <ClCompile Include="Packet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\serial\serial.h">
+      <Filter>SerialPortLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="include\serial\impl\unix.h">
+      <Filter>SerialPortLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="include\serial\v8stdint.h">
+      <Filter>SerialPortLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="include\serial\impl\win.h">
+      <Filter>SerialPortLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h" />
+    <ClInclude Include="Enums.h" />
+    <ClInclude Include="Libs.h" />
+    <ClInclude Include="Packet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="SerialPortLibrary">
+      <UniqueIdentifier>{3775daf0-3614-43b9-b40f-11df7353954e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
