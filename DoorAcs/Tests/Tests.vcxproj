@@ -87,13 +87,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\tlemau\Desktop\DOOR_ACS_vs\DoorAcs\DoorAcs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\DoorAcs;C:\Users\tlemau\Desktop\DOOR_ACS_vs\DoorAcs\DoorAcs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Utilities.obj;Packet.obj;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\Users\tlemau\Desktop\DOOR_ACS_vs\DoorAcs\DoorAcs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>"Utilities.obj";"Packet.obj";%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>"C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\DoorAcs\Debug";C:\Users\tlemau\Desktop\DOOR_ACS_vs\DoorAcs\DoorAcs\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -102,10 +102,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\DoorAcs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Setupapi.lib;Packet.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\Tests\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
