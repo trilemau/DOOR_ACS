@@ -1,4 +1,5 @@
 #include "serial/serial.h"
+#include <SQLiteCpp/Database.h>
 
 #include "Libs.h"
 #include "Utilities.h"
@@ -7,7 +8,12 @@
 #define COM_PORT "COM3"
 #define BAUD_RATE 9600
 
-int main()
+void sqlTest()
+{
+
+}
+
+int cardReader()
 {
     serial::Serial serial_port(COM_PORT, BAUD_RATE, serial::Timeout::simpleTimeout(1000));
 
@@ -75,6 +81,20 @@ int main()
         {
             std::cout << e.what();
         }
+    }
+
+    return 0;
+}
+
+int main()
+{
+    sqlTest();
+
+    auto result = cardReader();
+
+    if (result != 0)
+    {
+        return result;
     }
 
     return 0;

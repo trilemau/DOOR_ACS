@@ -22,6 +22,28 @@
     </ClCompile>
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="include\SQLiteCpp\sqlite3\sqlite3.c">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Database.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Exception.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Statement.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Transaction.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Backup.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="include\SQLiteCpp\src\Column.cpp">
+      <Filter>SQLiteCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLDatabase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\serial\serial.h">
@@ -40,10 +62,44 @@
     <ClInclude Include="Enums.h" />
     <ClInclude Include="Libs.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="include\SQLiteCpp\Assertion.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Backup.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Column.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Database.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Exception.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\SQLiteCpp.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Statement.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\Transaction.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\VariadicBind.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SQLiteCpp\sqlite3\sqlite3.h">
+      <Filter>SQLiteCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLDatabase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SerialPortLibrary">
       <UniqueIdentifier>{3775daf0-3614-43b9-b40f-11df7353954e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLiteCpp">
+      <UniqueIdentifier>{3106e713-c618-4d44-b4bd-c4ffff64dfb9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
