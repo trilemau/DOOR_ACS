@@ -36,15 +36,14 @@ int cardReader()
 
     string check_presence_data = "1202\r";
 
-    const auto apdu = "00A4040010"; // APDU header
+    const auto select_apdu = "00A4040010"; // APDU header
     const auto aid = "FF3F12C1583A69D28C4082412A90AC00"; // AID
     string select_data = "1203";
     select_data += "15"; // 21 in HEX
-    select_data += apdu;
+    select_data += select_apdu;
     select_data += aid;
     select_data += "15"; // 21 in HEX
     select_data += '\r';
-
 
     while (true)
     {
@@ -70,10 +69,32 @@ int cardReader()
             //std::cout << "check_presence_response = " << response_string << "\n";
 
             // Send Select APDU
+            std::cout << "select_apdu = " << select_data << "\n";
             serial_port.write(select_data);
             response_string = serial_port.read(0xFF);
             response_bytes = Utilities::HexStringToBytes(response_string);
             std::cout << "select_apdu_response = " << response_string << "\n";
+
+            // Check if phone responded
+            if (response_string == "0001029000\r")
+            {
+                const auto get_apdu = "00C0000010";
+                const auto gate_id = "AAAAAAAAAAAAAAAA";
+                const auto gate_salt = "BBBBBBBBBBBBBBBB";
+                string get_card_data = "1203";
+                get_card_data += "15";
+                get_card_data += get_apdu;
+                get_card_data += gate_id;
+                get_card_data += gate_salt;
+                get_card_data += "15";
+                get_card_data += '\r';
+
+                //serial_port.write(get_card_data);
+                //std::cout << "get_card = " << get_card_data << "\n";
+                //response_string = serial_port.read(0xFF);
+                //response_bytes = Utilities::HexStringToBytes(response_string);
+                //std::cout << "get_card_response = " << response_string << "\n";
+            }
 
             std::cout << "\n";
         }
