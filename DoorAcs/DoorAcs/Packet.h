@@ -96,7 +96,31 @@ public:
 
     string GetData() const override;
     void ParseResponse(const vector<BYTE>& response) override;
+
+    bool GetResult() const;
 };
 
 
 // -------- ISO14443_4_TDX --------
+class ISO14443_4_TDX : public Packet
+{
+    BYTE payload_size_;
+    string payload_;
+    BYTE maximum_response_size_;
+    bool result_;
+    BYTE response_size_;
+    vector<BYTE> response_;
+
+public:
+    ISO14443_4_TDX(BYTE payload_size, const string& payload, BYTE maximum_response_size);
+
+    string GetData() const override;
+    void ParseResponse(const vector<BYTE>& response) override;
+
+    BYTE GetPayloadSize() const;
+    const string& GetPayload() const;
+    BYTE GetMaximumResponseSize() const;
+    bool GetResult() const;
+    BYTE GetResponseSize() const;
+    const vector<BYTE>& GetResponse() const;
+};

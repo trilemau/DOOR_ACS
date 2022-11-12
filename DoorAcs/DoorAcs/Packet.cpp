@@ -57,7 +57,7 @@ SearchTag::SearchTag(BYTE max_id_bytes)
 string SearchTag::GetData() const
 {
     stringstream ss;
-    ss << GetCommandNumber() << std::hex << std::setfill('0') << std::setw(2) << static_cast<int>(max_id_bytes_) << PACKET_CARRIEGE_RETURN;
+    ss << GetCommandNumber() << std::hex << std::setfill('0') << std::setw(2) << static_cast<uint32_t>(max_id_bytes_) << PACKET_CARRIEGE_RETURN;
     return ss.str();
 }
 
@@ -147,16 +147,16 @@ string SetTagTypes::GetData() const
     ss << GetCommandNumber() << std::hex << std::setfill('0');
 
     // LF
-    ss << std::setw(2) << (static_cast<int>(lf_) & 0xFF);
-    ss << std::setw(2) << ((static_cast<int>(lf_) & 0xFF00) >> 8);
-    ss << std::setw(2) << ((static_cast<int>(lf_) & 0xFF0000) >> 16);
-    ss << std::setw(2) << ((static_cast<int>(lf_) & 0xFF000000) >> 24);
+    ss << std::setw(2) << (static_cast<uint32_t>(lf_) & 0xFF);
+    ss << std::setw(2) << ((static_cast<uint32_t>(lf_) & 0xFF00) >> 8);
+    ss << std::setw(2) << ((static_cast<uint32_t>(lf_) & 0xFF0000) >> 16);
+    ss << std::setw(2) << ((static_cast<uint32_t>(lf_) & 0xFF000000) >> 24);
 
     // HF
-    ss << std::setw(2) << (static_cast<int>(hf_) & 0xFF);
-    ss << std::setw(2) << ((static_cast<int>(hf_) & 0xFF00) >> 8);
-    ss << std::setw(2) << ((static_cast<int>(hf_) & 0xFF0000) >> 16);
-    ss << std::setw(2) << ((static_cast<int>(hf_) & 0xFF000000) >> 24);
+    ss << std::setw(2) << (static_cast<uint32_t>(hf_) & 0xFF);
+    ss << std::setw(2) << ((static_cast<uint32_t>(hf_) & 0xFF00) >> 8);
+    ss << std::setw(2) << ((static_cast<uint32_t>(hf_) & 0xFF0000) >> 16);
+    ss << std::setw(2) << ((static_cast<uint32_t>(hf_) & 0xFF000000) >> 24);
 
     ss << PACKET_CARRIEGE_RETURN;
 
@@ -217,4 +217,89 @@ void CheckPresence::ParseResponse(const vector<BYTE>& response)
     }
 
     result_ = response[1];
+}
+
+bool CheckPresence::GetResult() const
+{
+    return result_;
+}
+
+
+// -------- ISO14443_4_TDX --------
+ISO14443_4_TDX::ISO14443_4_TDX(BYTE payload_size, const string& payload, BYTE maximum_response_size)
+    : Packet(PacketType::ISO14443_4_TDX, COMMAND_NUMBER_ISO14443_4_TDX)
+    , payload_size_(payload_size)
+    , payload_(payload)
+    , maximum_response_size_(maximum_response_size)
+    , result_(false)
+    , response_size_(0)
+{
+
+}
+
+string ISO14443_4_TDX::GetData() const
+{
+    stringstream ss;
+    ss << GetCommandNumber() << std::hex << std::setfill('0');
+
+    ss << std::setw(2) << (static_cast<uint32_t>(payload_size_) & 0xFF);
+    ss << payload_;
+    ss << std::setw(2) << (static_cast<uint32_t>(maximum_response_size_) & 0xFF);
+
+    ss << PACKET_CARRIEGE_RETURN;
+
+    return ss.str();
+}
+
+void ISO14443_4_TDX::ParseResponse(const vector<BYTE>& response)
+{
+    // Check the base of the response
+    Packet::ParseResponse(response);
+
+    // Response has to be atleast 3
+    if (response.size() < 3)
+    {
+        std::cout << GetData() << '\n';
+        std::cout << Utilities::VectorToString(response) << '\n';
+        throw std::runtime_error("ISO14443_4_TDX invalid response");
+    }
+
+    result_ = response[1];
+    response_size_ = response[2];
+
+    response_.reserve(response_size_);
+    for (auto i = 0; i < response_size_; i++)
+    {
+        response_.emplace_back(response[i]);
+    }
+}
+
+BYTE ISO14443_4_TDX::GetPayloadSize() const
+{
+    return payload_size_;
+}
+
+const string& ISO14443_4_TDX::GetPayload() const
+{
+    return payload_;
+}
+
+BYTE ISO14443_4_TDX::GetMaximumResponseSize() const
+{
+    return maximum_response_size_;
+}
+
+bool ISO14443_4_TDX::GetResult() const
+{
+    return result_;
+}
+
+BYTE ISO14443_4_TDX::GetResponseSize() const
+{
+    return response_size_;
+}
+
+const vector<BYTE>& ISO14443_4_TDX::GetResponse() const
+{
+    return response_;
 }
