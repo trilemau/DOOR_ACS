@@ -6,23 +6,40 @@
 // -------- enum PacketType --------
 enum class PacketType
 {
-    GET_VERSION_STRING,
     SEARCH_TAG,
-    SET_PARAMETERS,
-    SET_TAG_TYPES
+    SET_TAG_TYPES,
+    CHECK_PRESENCE,
+    ISO14443_4_TDX
 };
+
+// -------- enum PacketType --------
+enum class PacketResponseErrorType
+{
+    ERR_NONE = 0,
+    ERR_UNKNOWN_FUNCTION = 1,
+    ERR_MISSING_PARAMETER = 2,
+    ERR_UNUSED_PARAMETERS = 3,
+    ERR_INVALID_FUNCTION = 4,
+    ERR_PARSER = 5
+};
+
 
 
 // -------- Packet --------
 class Packet
 {
-    PacketType type_;
+    PacketType packet_type_;
+    string command_number_;
+    PacketResponseErrorType packet_response_error_type_;
 
 public:
-    Packet(PacketType type);
+    Packet(PacketType packet_type, const string& command_number);
 
-    virtual string GetData() const;
-    virtual void ParseResponse(const vector<BYTE>& response);
+    virtual PacketType GetPacketType() const;
+    virtual string GetCommandNumber() const;
+
+    virtual string GetData() const = 0;
+    virtual void ParseResponse(const vector<BYTE>& response);   // Parses the first byte - error byte
 };
 
 
@@ -67,3 +84,19 @@ public:
     TagType GetLF() const;
     TagType GetHF() const;
 };
+
+
+// -------- CheckPresence --------
+class CheckPresence : public Packet
+{
+    bool result_;
+
+public:
+    CheckPresence();
+
+    string GetData() const override;
+    void ParseResponse(const vector<BYTE>& response) override;
+};
+
+
+// -------- ISO14443_4_TDX --------

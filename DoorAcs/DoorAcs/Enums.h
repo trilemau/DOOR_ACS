@@ -1,5 +1,8 @@
 #pragma once
 
+// This macro is used when selecting a TagType
+// e.g.
+// SetTagTypes(TAGMASK(LFTAG_EM4102) | TAGMASK(LFTAG_HITAG1S), TAGMASK(HFTAG_MIFARE));
 #define TAGMASK(Tagtype)    static_cast<TagType>(1 << (static_cast<int>(Tagtype) & 0x1F))
 
 enum class TagType
