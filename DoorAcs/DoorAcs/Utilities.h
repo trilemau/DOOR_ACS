@@ -8,4 +8,5 @@ public:
     static int ASCIICharToHex(char ascii_char);
     static vector<BYTE> HexStringToBytes(const string& byte_string);
     static string VectorToString(const vector<BYTE>& vector);
+    static string VectorToStringCompact(const vector<BYTE>& vector);
 };

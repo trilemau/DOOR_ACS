@@ -3,28 +3,6 @@
 #include "Libs.h"
 
 
-// -------- enum PacketType --------
-enum class PacketType
-{
-    SEARCH_TAG,
-    SET_TAG_TYPES,
-    CHECK_PRESENCE,
-    ISO14443_4_TDX
-};
-
-// -------- enum PacketType --------
-enum class PacketResponseErrorType
-{
-    ERR_NONE = 0,
-    ERR_UNKNOWN_FUNCTION = 1,
-    ERR_MISSING_PARAMETER = 2,
-    ERR_UNUSED_PARAMETERS = 3,
-    ERR_INVALID_FUNCTION = 4,
-    ERR_PARSER = 5
-};
-
-
-
 // -------- Packet --------
 class Packet
 {
@@ -66,6 +44,7 @@ public:
     BYTE GetIdBitCount() const;
     BYTE GetIdByteCount() const;
     const vector<BYTE>& GetId() const;
+    const string GetIdString() const;
 };
 
 

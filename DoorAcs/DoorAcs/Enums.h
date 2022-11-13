@@ -5,6 +5,7 @@
 // SetTagTypes(TAGMASK(LFTAG_EM4102) | TAGMASK(LFTAG_HITAG1S), TAGMASK(HFTAG_MIFARE));
 #define TAGMASK(Tagtype)    static_cast<TagType>(1 << (static_cast<int>(Tagtype) & 0x1F))
 
+// -------- enum PacketType --------
 enum class TagType
 {
     NOTAG = 0,
@@ -52,4 +53,24 @@ enum class TagType
     HFTAG_CTS         = 0x8A,   // "CTS256 / CTS512"
 
     ALL_TAGS = -1 // 0xFFFFFFFF
+};
+
+// -------- enum PacketType --------
+enum class PacketType
+{
+    SEARCH_TAG,
+    SET_TAG_TYPES,
+    CHECK_PRESENCE,
+    ISO14443_4_TDX
+};
+
+// -------- enum PacketType --------
+enum class PacketResponseErrorType
+{
+    ERR_NONE = 0,
+    ERR_UNKNOWN_FUNCTION = 1,
+    ERR_MISSING_PARAMETER = 2,
+    ERR_UNUSED_PARAMETERS = 3,
+    ERR_INVALID_FUNCTION = 4,
+    ERR_PARSER = 5
 };

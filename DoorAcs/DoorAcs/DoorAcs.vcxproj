@@ -90,7 +90,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\DoorAcs\include\SQLiteCpp\sqlite3;C:\Users\stefq\Documents\GitHub\DOOR_ACS\DoorAcs\DoorAcs\include;C:\Users\tlemau\Desktop\DOOR_ACS_vs\DoorAcs\DoorAcs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,16 +157,8 @@
     <ClCompile Include="include\serial\impl\serial.cc" />
     <ClCompile Include="include\serial\impl\unix.cc" />
     <ClCompile Include="include\serial\impl\win.cc" />
-    <ClCompile Include="include\SQLiteCpp\sqlite3\sqlite3.c" />
-    <ClCompile Include="include\SQLiteCpp\src\Backup.cpp" />
-    <ClCompile Include="include\SQLiteCpp\src\Column.cpp" />
-    <ClCompile Include="include\SQLiteCpp\src\Database.cpp" />
-    <ClCompile Include="include\SQLiteCpp\src\Exception.cpp" />
-    <ClCompile Include="include\SQLiteCpp\src\Statement.cpp" />
-    <ClCompile Include="include\SQLiteCpp\src\Transaction.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Packet.cpp" />
-    <ClCompile Include="SQLDatabase.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -175,19 +167,8 @@
     <ClInclude Include="include\serial\impl\win.h" />
     <ClInclude Include="include\serial\serial.h" />
     <ClInclude Include="include\serial\v8stdint.h" />
-    <ClInclude Include="include\SQLiteCpp\Assertion.h" />
-    <ClInclude Include="include\SQLiteCpp\Backup.h" />
-    <ClInclude Include="include\SQLiteCpp\Column.h" />
-    <ClInclude Include="include\SQLiteCpp\Database.h" />
-    <ClInclude Include="include\SQLiteCpp\Exception.h" />
-    <ClInclude Include="include\SQLiteCpp\sqlite3\sqlite3.h" />
-    <ClInclude Include="include\SQLiteCpp\SQLiteCpp.h" />
-    <ClInclude Include="include\SQLiteCpp\Statement.h" />
-    <ClInclude Include="include\SQLiteCpp\Transaction.h" />
-    <ClInclude Include="include\SQLiteCpp\VariadicBind.h" />
     <ClInclude Include="Libs.h" />
     <ClInclude Include="Packet.h" />
-    <ClInclude Include="SQLDatabase.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

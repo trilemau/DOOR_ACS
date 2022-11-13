@@ -70,3 +70,17 @@ string Utilities::VectorToString(const vector<BYTE>& vector)
 
     return stream.str();
 }
+
+string Utilities::VectorToStringCompact(const vector<BYTE>& vector)
+{
+    stringstream stream;
+
+    stream << std::setfill('0') << std::hex;
+
+    for (size_t i = 0; i < vector.size(); i++)
+    {
+        stream << std::setw(2) << static_cast<int>(vector[i]);
+    }
+
+    return stream.str();
+}

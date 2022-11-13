@@ -131,6 +131,11 @@ const vector<BYTE>& SearchTag::GetId() const
     return id_;
 }
 
+const string SearchTag::GetIdString() const
+{
+    return Utilities::VectorToStringCompact(id_);
+}
+
 
 // -------- SetTagTypes --------
 SetTagTypes::SetTagTypes(TagType lf, TagType hf)
