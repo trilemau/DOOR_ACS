@@ -62,25 +62,6 @@ int cardReader()
         return EXIT_FAILURE;
     }
 
-    const string cla = "00";
-    const string select_ins = "A4";
-    const string apdu_p1 = "04";
-    const string apdu_p2 = "00";
-    const string aid_length = "08"; // 8 bytes
-    const string aid = "FF00000000000001"; // AID 8 bytes
-    const string exp_response_length = "FF";
-
-    string select_apdu_payload;
-    select_apdu_payload += cla;
-    select_apdu_payload += select_ins;
-    select_apdu_payload += apdu_p1;
-    select_apdu_payload += apdu_p2;
-    select_apdu_payload += aid_length;
-    select_apdu_payload += aid;
-    select_apdu_payload += exp_response_length;
-
-    const BYTE select_apdu_payload_size = 14;
-
     while (true)
     {
         try
@@ -107,7 +88,7 @@ int cardReader()
             auto id = search_tag.GetId();
 
             // Send SELECT FILE APDU command
-            SelectFileAPDUCommand select_file_apdu_command(aid);
+            SelectFileAPDUCommand select_file_apdu_command(HCE_SERVICE_AID);
             ISO14443_4_TDX_Packet select_file_tdx_packet(select_file_apdu_command, MAX_RESPONSE_NUMBER_OF_BYTES);
             data_string = select_file_tdx_packet.GetData();
             written_bytes = serial_port.write(data_string);
@@ -151,6 +132,8 @@ int cardReader()
             {
                 std::cout << "Tag ID = " << id << "\n";
             }
+
+            // TODO add check for access granted
         }
         catch (const std::exception& e)
         {

@@ -15,6 +15,7 @@
 #define ALL_HF_TAG_TYPES 0xFFFFFFFF
 
 // APDU command constants
+#define HCE_SERVICE_AID "FF00000000000001"
 #define DEFAULT_CLA 0
 #define NO_PARAMETER 0
 #define P1_SELECT_FILE 04
