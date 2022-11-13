@@ -36,6 +36,18 @@ int Utilities::ASCIICharToHex(char ascii_char)
         return 0xE;
     case 'F':
         return 0xF;
+    case 'a':
+        return 0xa;
+    case 'b':
+        return 0xb;
+    case 'c':
+        return 0xc;
+    case 'd':
+        return 0xd;
+    case 'e':
+        return 0xe;
+    case 'f':
+        return 0xf;
     default:
         throw std::invalid_argument("[ASCIIChartToHex] invalid ASCII char");
     }
@@ -56,7 +68,7 @@ string Utilities::VectorToString(const vector<BYTE>& vector)
 {
     stringstream stream;
 
-    stream << '[' << std::setfill('0') << std::hex;
+    stream << '[' << std::setfill('0') << std::hex << std::uppercase;
 
     for (size_t i = 0; i < vector.size(); i++)
     {
@@ -75,7 +87,7 @@ string Utilities::VectorToStringCompact(const vector<BYTE>& vector)
 {
     stringstream stream;
 
-    stream << std::setfill('0') << std::hex;
+    stream << std::setfill('0') << std::hex << std::uppercase;
 
     for (size_t i = 0; i < vector.size(); i++)
     {

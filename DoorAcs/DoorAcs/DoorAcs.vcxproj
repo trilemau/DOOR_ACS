@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="APDUCommand.cpp" />
+    <ClCompile Include="APDUResponse.cpp" />
     <ClCompile Include="include\serial\impl\list_ports_linux.cc" />
     <ClCompile Include="include\serial\impl\list_ports_osx.cc" />
     <ClCompile Include="include\serial\impl\list_ports_win.cc" />
@@ -162,6 +164,9 @@
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="APDUCommand.h" />
+    <ClInclude Include="APDUResponse.h" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Enums.h" />
     <ClInclude Include="include\serial\impl\unix.h" />
     <ClInclude Include="include\serial\impl\win.h" />

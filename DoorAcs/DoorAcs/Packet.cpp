@@ -1,13 +1,6 @@
 #include "Packet.h"
+
 #include "Utilities.h"
-
-#define PACKET_CARRIEGE_RETURN '\r'
-
-#define COMMAND_NUMBER_SEARCH_TAG "0500"
-#define COMMAND_NUMBER_SET_TAG_TYPES "0502"
-#define COMMAND_NUMBER_CHECK_PRESENCE "1202"
-#define COMMAND_NUMBER_ISO14443_4_TDX "1203"
-
 
 
 // -------- Packet --------
@@ -28,6 +21,11 @@ string Packet::GetCommandNumber() const
     return command_number_;
 }
 
+PacketResponseErrorType Packet::GetResponseError() const
+{
+    return packet_response_error_type_;
+}
+
 void Packet::ParseResponse(const vector<BYTE>& response)
 {
     // Response has to be atleast 1 byte long - error byte
@@ -39,14 +37,21 @@ void Packet::ParseResponse(const vector<BYTE>& response)
     }
 
     packet_response_error_type_ = static_cast<PacketResponseErrorType>(response[0]);
+
+    if (packet_response_error_type_ != PacketResponseErrorType::ERR_NONE)
+    {
+        std::cout << GetData() << '\n';
+        std::cout << Utilities::VectorToString(response) << '\n';
+        throw std::runtime_error("Packet error response type");
+    }
 }
 
 
-// -------- SearchTag --------
-SearchTag::SearchTag(BYTE max_id_bytes)
+// -------- SearchTagPacket --------
+SearchTagPacket::SearchTagPacket(BYTE max_id_bytes)
     : Packet(PacketType::SEARCH_TAG, COMMAND_NUMBER_SEARCH_TAG)
     , max_id_bytes_(max_id_bytes)
-    , result_(0)
+    , result_(false)
     , tag_type_(TagType::NOTAG)
     , id_bit_count_(0)
     , id_byte_count_(0)
@@ -54,14 +59,20 @@ SearchTag::SearchTag(BYTE max_id_bytes)
 
 }
 
-string SearchTag::GetData() const
+string SearchTagPacket::GetData() const
 {
     stringstream ss;
-    ss << GetCommandNumber() << std::hex << std::setfill('0') << std::setw(2) << static_cast<uint32_t>(max_id_bytes_) << PACKET_CARRIEGE_RETURN;
+
+    ss << GetCommandNumber();
+    ss << std::hex << std::setfill('0');
+    ss << std::uppercase;
+    ss << std::setw(2) << (max_id_bytes_ & 0xFF);
+    ss << PACKET_CARRIEGE_RETURN;
+
     return ss.str();
 }
 
-void SearchTag::ParseResponse(const vector<BYTE>& response)
+void SearchTagPacket::ParseResponse(const vector<BYTE>& response)
 {
     // Check the base of the response
     Packet::ParseResponse(response);
@@ -71,7 +82,7 @@ void SearchTag::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("SearchTag invalid response");
+        throw std::runtime_error("SearchTagPacket invalid response");
     }
 
     result_ = response[1];
@@ -84,7 +95,7 @@ void SearchTag::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("SearchTag invalid response - tag found");
+        throw std::runtime_error("SearchTagPacket invalid response - tag found");
     }
 
     tag_type_ = static_cast<TagType>(response[2]);
@@ -95,50 +106,48 @@ void SearchTag::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("SearchTag invalid response - tag length");
+        throw std::runtime_error("SearchTagPacket invalid response - tag length");
     }
 
-    id_.assign(response.begin() + 5, response.end());
+    vector<BYTE> id_bytes;
+    id_bytes.assign(response.begin() + 5, response.end());
+
+    id_ = Utilities::VectorToStringCompact(id_bytes);
 }
 
-BYTE SearchTag::GetMaxIdBytes() const
+BYTE SearchTagPacket::GetMaxIdBytes() const
 {
     return max_id_bytes_;
 }
 
-bool SearchTag::GetResult() const
+bool SearchTagPacket::GetResult() const
 {
     return result_;
 }
 
-TagType SearchTag::GetTagType() const
+TagType SearchTagPacket::GetTagType() const
 {
     return tag_type_;
 }
 
-BYTE SearchTag::GetIdBitCount() const
+BYTE SearchTagPacket::GetIdBitCount() const
 {
     return id_bit_count_;
 }
 
-BYTE SearchTag::GetIdByteCount() const
+BYTE SearchTagPacket::GetIdByteCount() const
 {
     return id_byte_count_;
 }
 
-const vector<BYTE>& SearchTag::GetId() const
+const string& SearchTagPacket::GetId() const
 {
     return id_;
 }
 
-const string SearchTag::GetIdString() const
-{
-    return Utilities::VectorToStringCompact(id_);
-}
 
-
-// -------- SetTagTypes --------
-SetTagTypes::SetTagTypes(TagType lf, TagType hf)
+// -------- SetTagTypesPacket --------
+SetTagTypesPacket::SetTagTypesPacket(TagType lf, TagType hf)
     : Packet(PacketType::SET_TAG_TYPES, COMMAND_NUMBER_SET_TAG_TYPES)
     , lf_(lf)
     , hf_(hf)
@@ -146,10 +155,11 @@ SetTagTypes::SetTagTypes(TagType lf, TagType hf)
 
 }
 
-string SetTagTypes::GetData() const
+string SetTagTypesPacket::GetData() const
 {
     stringstream ss;
     ss << GetCommandNumber() << std::hex << std::setfill('0');
+    ss << std::uppercase;
 
     // LF
     ss << std::setw(2) << (static_cast<uint32_t>(lf_) & 0xFF);
@@ -168,7 +178,7 @@ string SetTagTypes::GetData() const
     return ss.str();
 }
 
-void SetTagTypes::ParseResponse(const vector<BYTE>& response)
+void SetTagTypesPacket::ParseResponse(const vector<BYTE>& response)
 {
     // Check the base of the response
     Packet::ParseResponse(response);
@@ -178,37 +188,40 @@ void SetTagTypes::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("SetTagTypes invalid response");
+        throw std::runtime_error("SetTagTypesPacket invalid response");
     }
 }
 
-TagType SetTagTypes::GetLF() const
+TagType SetTagTypesPacket::GetLF() const
 {
     return lf_;
 }
 
-TagType SetTagTypes::GetHF() const
+TagType SetTagTypesPacket::GetHF() const
 {
     return hf_;
 }
 
-// --------CheckPresence--------
-CheckPresence::CheckPresence()
+// --------CheckPresencePacket--------
+CheckPresencePacket::CheckPresencePacket()
     : Packet(PacketType::CHECK_PRESENCE, COMMAND_NUMBER_CHECK_PRESENCE)
     , result_(false)
 {
 
 }
 
-string CheckPresence::GetData() const
+string CheckPresencePacket::GetData() const
 {
     stringstream ss;
-    ss << GetCommandNumber() << PACKET_CARRIEGE_RETURN;
+
+    ss << std::uppercase;
+    ss << GetCommandNumber();
+    ss << PACKET_CARRIEGE_RETURN;
 
     return ss.str();
 }
 
-void CheckPresence::ParseResponse(const vector<BYTE>& response)
+void CheckPresencePacket::ParseResponse(const vector<BYTE>& response)
 {
     // Check the base of the response
     Packet::ParseResponse(response);
@@ -218,45 +231,56 @@ void CheckPresence::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("CheckPresence invalid response");
+        throw std::runtime_error("CheckPresencePacket invalid response");
     }
 
     result_ = response[1];
 }
 
-bool CheckPresence::GetResult() const
+bool CheckPresencePacket::GetResult() const
 {
     return result_;
 }
 
 
-// -------- ISO14443_4_TDX --------
-ISO14443_4_TDX::ISO14443_4_TDX(BYTE payload_size, const string& payload, BYTE maximum_response_size)
-    : Packet(PacketType::ISO14443_4_TDX, COMMAND_NUMBER_ISO14443_4_TDX)
+// -------- ISO14443_4_TDX_Packet --------
+ISO14443_4_TDX_Packet::ISO14443_4_TDX_Packet(BYTE payload_size, const string& payload, BYTE maximum_response_size)
+    : Packet(PacketType::ISO14443_4_TDX_Packet, COMMAND_NUMBER_ISO14443_4_TDX)
     , payload_size_(payload_size)
     , payload_(payload)
     , maximum_response_size_(maximum_response_size)
     , result_(false)
-    , response_size_(0)
+    , actual_response_size_(0)
 {
 
 }
 
-string ISO14443_4_TDX::GetData() const
+ISO14443_4_TDX_Packet::ISO14443_4_TDX_Packet(const APDUCommand& apdu_command, BYTE maximum_response_size)
+    : Packet(PacketType::ISO14443_4_TDX_Packet, COMMAND_NUMBER_ISO14443_4_TDX)
+    , payload_size_(apdu_command.GetPayloadSize())
+    , payload_(apdu_command.GetPayload())
+    , maximum_response_size_(maximum_response_size)
+    , result_(false)
+    , actual_response_size_(0)
+{
+
+}
+
+string ISO14443_4_TDX_Packet::GetData() const
 {
     stringstream ss;
-    ss << GetCommandNumber() << std::hex << std::setfill('0');
 
-    ss << std::setw(2) << (static_cast<uint32_t>(payload_size_) & 0xFF);
+    ss << GetCommandNumber() << std::hex << std::setfill('0') << std::uppercase;
+    ss << std::setw(2) << (payload_size_ & 0xFF);
     ss << payload_;
-    ss << std::setw(2) << (static_cast<uint32_t>(maximum_response_size_) & 0xFF);
+    ss << std::setw(2) << (maximum_response_size_ & 0xFF);
 
     ss << PACKET_CARRIEGE_RETURN;
 
     return ss.str();
 }
 
-void ISO14443_4_TDX::ParseResponse(const vector<BYTE>& response)
+void ISO14443_4_TDX_Packet::ParseResponse(const vector<BYTE>& response)
 {
     // Check the base of the response
     Packet::ParseResponse(response);
@@ -266,45 +290,48 @@ void ISO14443_4_TDX::ParseResponse(const vector<BYTE>& response)
     {
         std::cout << GetData() << '\n';
         std::cout << Utilities::VectorToString(response) << '\n';
-        throw std::runtime_error("ISO14443_4_TDX invalid response");
+        throw std::runtime_error("ISO14443_4_TDX_Packet invalid response");
     }
 
     result_ = response[1];
-    response_size_ = response[2];
+    actual_response_size_ = response[2];
 
-    response_.reserve(response_size_);
-    for (auto i = 0; i < response_size_; i++)
+    vector<BYTE> response_bytes;
+    response_bytes.reserve(actual_response_size_);
+    for (auto i = 0; i < actual_response_size_; i++)
     {
-        response_.emplace_back(response[i]);
+        response_bytes.emplace_back(response[i+3]);
     }
+
+    response_ = Utilities::VectorToStringCompact(response_bytes);
 }
 
-BYTE ISO14443_4_TDX::GetPayloadSize() const
+BYTE ISO14443_4_TDX_Packet::GetPayloadSize() const
 {
     return payload_size_;
 }
 
-const string& ISO14443_4_TDX::GetPayload() const
+const string& ISO14443_4_TDX_Packet::GetPayload() const
 {
     return payload_;
 }
 
-BYTE ISO14443_4_TDX::GetMaximumResponseSize() const
+BYTE ISO14443_4_TDX_Packet::GetMaximumResponseSize() const
 {
     return maximum_response_size_;
 }
 
-bool ISO14443_4_TDX::GetResult() const
+bool ISO14443_4_TDX_Packet::GetResult() const
 {
     return result_;
 }
 
-BYTE ISO14443_4_TDX::GetResponseSize() const
+BYTE ISO14443_4_TDX_Packet::GetActualResponseSize() const
 {
-    return response_size_;
+    return actual_response_size_;
 }
 
-const vector<BYTE>& ISO14443_4_TDX::GetResponse() const
+const string& ISO14443_4_TDX_Packet::GetResponse() const
 {
     return response_;
 }

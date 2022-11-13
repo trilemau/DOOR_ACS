@@ -2,6 +2,8 @@
 
 #include "Libs.h"
 
+#include "APDUCommand.h"
+
 
 // -------- Packet --------
 class Packet
@@ -13,16 +15,17 @@ class Packet
 public:
     Packet(PacketType packet_type, const string& command_number);
 
-    virtual PacketType GetPacketType() const;
-    virtual string GetCommandNumber() const;
+    PacketType GetPacketType() const;
+    string GetCommandNumber() const;
+    PacketResponseErrorType GetResponseError() const;
 
     virtual string GetData() const = 0;
     virtual void ParseResponse(const vector<BYTE>& response);   // Parses the first byte - error byte
 };
 
 
-// -------- SearchTag --------
-class SearchTag : public Packet
+// -------- SearchTagPacket --------
+class SearchTagPacket : public Packet
 {
     BYTE max_id_bytes_;
 
@@ -30,32 +33,32 @@ class SearchTag : public Packet
     TagType tag_type_;
     BYTE id_bit_count_;
     BYTE id_byte_count_;
-    vector<BYTE> id_;
+    string id_;
 
 public:
-    SearchTag(BYTE max_id_bytes);
+    SearchTagPacket(BYTE max_id_bytes);
 
     string GetData() const override;
     void ParseResponse(const vector<BYTE>& response) override;
 
     BYTE GetMaxIdBytes() const;
+
     bool GetResult() const;
     TagType GetTagType() const;
     BYTE GetIdBitCount() const;
     BYTE GetIdByteCount() const;
-    const vector<BYTE>& GetId() const;
-    const string GetIdString() const;
+    const string& GetId() const;
 };
 
 
-// -------- SetTagTypes --------
-class SetTagTypes : public Packet
+// -------- SetTagTypesPacket --------
+class SetTagTypesPacket : public Packet
 {
     TagType lf_;
     TagType hf_;
 
 public:
-    SetTagTypes(TagType lf, TagType hf);
+    SetTagTypesPacket(TagType lf, TagType hf);
 
     string GetData() const override;
     void ParseResponse(const vector<BYTE>& response) override;
@@ -65,13 +68,13 @@ public:
 };
 
 
-// -------- CheckPresence --------
-class CheckPresence : public Packet
+// -------- CheckPresencePacket --------
+class CheckPresencePacket : public Packet
 {
     bool result_;
 
 public:
-    CheckPresence();
+    CheckPresencePacket();
 
     string GetData() const override;
     void ParseResponse(const vector<BYTE>& response) override;
@@ -80,18 +83,20 @@ public:
 };
 
 
-// -------- ISO14443_4_TDX --------
-class ISO14443_4_TDX : public Packet
+// -------- ISO14443_4_TDX_Packet --------
+class ISO14443_4_TDX_Packet : public Packet
 {
     BYTE payload_size_;
     string payload_;
     BYTE maximum_response_size_;
+
     bool result_;
-    BYTE response_size_;
-    vector<BYTE> response_;
+    BYTE actual_response_size_;
+    string response_;
 
 public:
-    ISO14443_4_TDX(BYTE payload_size, const string& payload, BYTE maximum_response_size);
+    ISO14443_4_TDX_Packet(BYTE payload_size, const string& payload, BYTE maximum_response_size);
+    ISO14443_4_TDX_Packet(const APDUCommand& apdu_command, BYTE maximum_response_size);
 
     string GetData() const override;
     void ParseResponse(const vector<BYTE>& response) override;
@@ -99,7 +104,8 @@ public:
     BYTE GetPayloadSize() const;
     const string& GetPayload() const;
     BYTE GetMaximumResponseSize() const;
+
     bool GetResult() const;
-    BYTE GetResponseSize() const;
-    const vector<BYTE>& GetResponse() const;
+    BYTE GetActualResponseSize() const;
+    const string& GetResponse() const;
 };

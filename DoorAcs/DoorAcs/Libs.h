@@ -1,3 +1,4 @@
+#include "Constants.h"
 #include "Enums.h"
 
 #include <iostream>
@@ -7,6 +8,7 @@
 #include <set>
 #include <stdexcept>
 #include <iomanip>
+#include <algorithm>
 
 using std::string;
 using std::stringstream;

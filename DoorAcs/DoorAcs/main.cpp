@@ -4,18 +4,10 @@
 #include "Libs.h"
 #include "Utilities.h"
 #include "Packet.h"
+#include "APDUResponse.h"
 
 #include <chrono>
 
-#define COM_PORT "COM3"
-#define BAUD_RATE 9600
-#define MAX_RESPONSE_NUMBER_OF_BYTES 0xFF
-
-#define NO_HF_TAG_TYPES 0
-#define ALL_LF_TAG_TYPES MAX_RESPONSE_NUMBER_OF_BYTESFFFFFF
-
-#define NO_LF_TAG_TYPES 0
-#define ALL_HF_TAG_TYPES MAX_RESPONSE_NUMBER_OF_BYTESFFFFFF
 
 void sqlTest()
 {
@@ -30,7 +22,7 @@ int cardReader()
         "A001"          // HCE Service of an Android device
     };
 
-    auto serial_port_timeout = serial::Timeout::simpleTimeout(500);
+    auto serial_port_timeout = serial::Timeout::simpleTimeout(700);
     serial_port_timeout.inter_byte_timeout = 0;
 
     serial::Serial serial_port(COM_PORT, BAUD_RATE, serial_port_timeout);
@@ -46,6 +38,7 @@ int cardReader()
     }
 
     // variable declarations
+    bool was_hce_used = false;
     int written_bytes;
     string data_string, response_string;
     vector<BYTE> response_bytes;
@@ -55,8 +48,8 @@ int cardReader()
 
     try
     {
-        // Send SetTagTypes
-        SetTagTypes set_tag_types(TagType::NOTAG, TagType::ALL_TAGS);
+        // Send SetTagTypesPacket
+        SetTagTypesPacket set_tag_types(TagType::NOTAG, TagType::ALL_TAGS);
         const auto set_tag_types_data = set_tag_types.GetData();
         written_bytes = serial_port.write(set_tag_types_data);
         response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
@@ -75,6 +68,7 @@ int cardReader()
     const string apdu_p2 = "00";
     const string aid_length = "08"; // 8 bytes
     const string aid = "FF00000000000001"; // AID 8 bytes
+    const string exp_response_length = "FF";
 
     string select_apdu_payload;
     select_apdu_payload += cla;
@@ -83,8 +77,9 @@ int cardReader()
     select_apdu_payload += apdu_p2;
     select_apdu_payload += aid_length;
     select_apdu_payload += aid;
+    select_apdu_payload += exp_response_length;
 
-    const BYTE select_apdu_payload_size = 13;
+    const BYTE select_apdu_payload_size = 14;
 
     while (true)
     {
@@ -92,13 +87,16 @@ int cardReader()
         {
             std::cout << "Searching...\n";
 
-            // Send SearchTag
-            SearchTag search_tag(16);
+            was_hce_used = false;
+
+            // Send SearchTagPacket
+            SearchTagPacket search_tag(16);
             data_string = search_tag.GetData();
             written_bytes = serial_port.write(data_string);
             response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
             response_bytes = Utilities::HexStringToBytes(response_string);
             search_tag.ParseResponse(response_bytes);
+            //std::cout << "response_string = " << response_string << "\n"; // Uncomment for debugging
 
             // No tag / card found
             if (search_tag.GetResult() == false)
@@ -106,48 +104,53 @@ int cardReader()
                 continue;
             }
 
-            auto tag_id = search_tag.GetIdString();
+            auto id = search_tag.GetId();
 
-            std::cout << "response_string = " << response_string << "\n";
-            std::cout << "Tag ID = " << tag_id << "\n";
-
-            // Send CheckPresence
-            //CheckPresence check_presence; cccheck delete ???
-            //data_string = check_presence.GetData();
-            //written_bytes = serial_port.write(data_string);
-            //response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
-            //response_bytes = Utilities::HexStringToBytes(response_string);
-            //check_presence.ParseResponse(response_bytes);
-            //std::cout << "check_presence_response = " << response_string << "\n";
-            //std::cout << "presence = " << check_presence.GetResult() << '\n';
-
-            // Send Select APDU
-            ISO14443_4_TDX select_apdu(select_apdu_payload_size, select_apdu_payload, MAX_RESPONSE_NUMBER_OF_BYTES);
-            data_string = select_apdu.GetData();
+            // Send SELECT FILE APDU command
+            SelectFileAPDUCommand select_file_apdu_command(aid);
+            ISO14443_4_TDX_Packet select_file_tdx_packet(select_file_apdu_command, MAX_RESPONSE_NUMBER_OF_BYTES);
+            data_string = select_file_tdx_packet.GetData();
             written_bytes = serial_port.write(data_string);
             response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
             response_bytes = Utilities::HexStringToBytes(response_string);
-            select_apdu.ParseResponse(response_bytes);
-            std::cout << "ISO14443_4_TDX_response = " << response_string << "\n";
+            select_file_tdx_packet.ParseResponse(response_bytes);
+            //std::cout << "select_file_response = " << response_string << "\n"; // Uncomment for debugging
 
-            // Check if phone responded
-            if (select_apdu.GetResult())
+            // Parse SELECT FILE APDU response only when command was sent successfully
+            if (select_file_tdx_packet.GetResult())
             {
-                const auto get_apdu_header = "00C0000000";
-                string get_card_data = "1203";
-                get_card_data += "05";
-                get_card_data += get_apdu_header;
-                get_card_data += "FF";
-                get_card_data += '\r';
+                // Parse SELECT FILE APDU response
+                SelectFileAPDUResponse select_file_apdu_response(select_file_tdx_packet.GetResponse());
 
-                serial_port.write(get_card_data);
-                std::cout << "get_card = " << get_card_data << "\n";
-                response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
-                response_bytes = Utilities::HexStringToBytes(response_string);
-                std::cout << "get_card_response = " << response_string << "\n";
+                // Check if phone responded with STATUS OK
+                if (select_file_apdu_response.GetStatus() == APDU_STATUS_OK)
+                {
+                    ISO14443_4_TDX_Packet get_response_tdx_packet(GetResponseAPDUCommand(), MAX_RESPONSE_NUMBER_OF_BYTES);
+                    data_string = get_response_tdx_packet.GetData();
+                    written_bytes = serial_port.write(data_string);
+                    response_string = serial_port.read(MAX_RESPONSE_NUMBER_OF_BYTES);
+                    response_bytes = Utilities::HexStringToBytes(response_string);
+                    get_response_tdx_packet.ParseResponse(response_bytes);
+                    std::cout << "get_response_response = " << response_string << "\n"; // Uncomment for debugging
+
+                    // Parse GET RESPONSE APDU response only when command was sent successfully
+                    if (get_response_tdx_packet.GetResult())
+                    {
+                        GetResponseAPDUResponse get_response_apdu_response(get_response_tdx_packet.GetResponse());
+                        id = get_response_apdu_response.GetId();
+                        was_hce_used = true;
+                    }
+                }
             }
 
-
+            if (was_hce_used == true)
+            {
+                std::cout << "HCE Service ID = " << id << "\n";
+            }
+            else
+            {
+                std::cout << "Tag ID = " << id << "\n";
+            }
         }
         catch (const std::exception& e)
         {

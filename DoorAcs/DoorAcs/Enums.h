@@ -2,10 +2,10 @@
 
 // This macro is used when selecting a TagType
 // e.g.
-// SetTagTypes(TAGMASK(LFTAG_EM4102) | TAGMASK(LFTAG_HITAG1S), TAGMASK(HFTAG_MIFARE));
+// SetTagTypesPacket(TAGMASK(LFTAG_EM4102) | TAGMASK(LFTAG_HITAG1S), TAGMASK(HFTAG_MIFARE));
 #define TAGMASK(Tagtype)    static_cast<TagType>(1 << (static_cast<int>(Tagtype) & 0x1F))
 
-// -------- enum PacketType --------
+// -------- enum TagType --------
 enum class TagType
 {
     NOTAG = 0,
@@ -61,10 +61,10 @@ enum class PacketType
     SEARCH_TAG,
     SET_TAG_TYPES,
     CHECK_PRESENCE,
-    ISO14443_4_TDX
+    ISO14443_4_TDX_Packet
 };
 
-// -------- enum PacketType --------
+// -------- enum PacketResponseErrorType --------
 enum class PacketResponseErrorType
 {
     ERR_NONE = 0,
@@ -73,4 +73,11 @@ enum class PacketResponseErrorType
     ERR_UNUSED_PARAMETERS = 3,
     ERR_INVALID_FUNCTION = 4,
     ERR_PARSER = 5
+};
+
+// -------- enum APDUCommandType --------
+enum class APDUCommandType
+{
+    SELECT_FILE,
+    GET_RESPONSE
 };

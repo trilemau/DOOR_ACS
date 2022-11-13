@@ -26,6 +26,12 @@
     <ClCompile Include="Utilities.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="APDUCommand.cpp">
+      <Filter>Packets</Filter>
+    </ClCompile>
+    <ClCompile Include="APDUResponse.cpp">
+      <Filter>Packets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\serial\serial.h">
@@ -51,6 +57,15 @@
     </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="APDUCommand.h">
+      <Filter>Packets</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="APDUResponse.h">
+      <Filter>Packets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
