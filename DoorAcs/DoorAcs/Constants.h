@@ -3,6 +3,7 @@
 // Serial port constants
 #define COM_PORT "COM3"
 #define BAUD_RATE 9600
+#define SERIAL_PORT_TIMEOUT 700
 
 // Simple Protocol constants
 #define MAX_RESPONSE_NUMBER_OF_BYTES 0xFF
@@ -13,6 +14,9 @@
 #define NO_HF_TAG_TYPES 0
 #define ALL_LF_TAG_TYPES 0xFFFFFFFF
 #define ALL_HF_TAG_TYPES 0xFFFFFFFF
+
+// Search Tag constants
+#define SEARCH_TAG_MAX_ID_BYTES 16
 
 // APDU command constants
 #define HCE_SERVICE_AID "FF00000000000001"

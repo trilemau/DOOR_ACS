@@ -9,7 +9,6 @@ APDUResponse::APDUResponse(APDUCommandType apdu_command_type, const string& resp
 	// SW1 and SW2 is mandatory
 	if (response.length() < 4)
 	{
-		std::cout << response << '\n';
 		throw std::runtime_error("APDUResponse invalid response");
 	}
 

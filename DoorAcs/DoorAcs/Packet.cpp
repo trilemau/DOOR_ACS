@@ -7,6 +7,7 @@
 Packet::Packet(PacketType packet_type, const string& command_number)
     : packet_type_(packet_type)
     , command_number_(command_number)
+    , packet_response_error_type_(PacketResponseErrorType::ERR_NONE)
 {
 
 }
@@ -31,8 +32,6 @@ void Packet::ParseResponse(const vector<BYTE>& response)
     // Response has to be atleast 1 byte long - error byte
     if (response.size() < 1)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("Packet invalid response");
     }
 
@@ -40,8 +39,6 @@ void Packet::ParseResponse(const vector<BYTE>& response)
 
     if (packet_response_error_type_ != PacketResponseErrorType::ERR_NONE)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("Packet error response type");
     }
 }
@@ -80,8 +77,6 @@ void SearchTagPacket::ParseResponse(const vector<BYTE>& response)
     // Response has to be atleast 2 bytes - NO TAG FOUND [0x0, 0x0]
     if (response.size() < 2 || response[0] != 0 || response[1] == 0 && response.size() != 2)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("SearchTagPacket invalid response");
     }
 
@@ -93,8 +88,6 @@ void SearchTagPacket::ParseResponse(const vector<BYTE>& response)
 
     if (response.size() < 5)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("SearchTagPacket invalid response - tag found");
     }
 
@@ -102,10 +95,8 @@ void SearchTagPacket::ParseResponse(const vector<BYTE>& response)
     id_bit_count_ = response[3];
     id_byte_count_ = response[4];
 
-    if (response.size() < 5 + id_byte_count_)
+    if (response.size() < id_byte_count_ + 5)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("SearchTagPacket invalid response - tag length");
     }
 
@@ -186,8 +177,6 @@ void SetTagTypesPacket::ParseResponse(const vector<BYTE>& response)
     // Response contains only error byte
     if (response.size() != 1)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("SetTagTypesPacket invalid response");
     }
 }
@@ -229,8 +218,6 @@ void CheckPresencePacket::ParseResponse(const vector<BYTE>& response)
     // Response has to be exactly 2
     if (response.size() != 2)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("CheckPresencePacket invalid response");
     }
 
@@ -288,8 +275,6 @@ void ISO14443_4_TDX_Packet::ParseResponse(const vector<BYTE>& response)
     // Response has to be atleast 3
     if (response.size() < 3)
     {
-        std::cout << GetData() << '\n';
-        std::cout << Utilities::VectorToString(response) << '\n';
         throw std::runtime_error("ISO14443_4_TDX_Packet invalid response");
     }
 

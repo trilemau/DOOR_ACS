@@ -57,7 +57,7 @@ string APDUCommand::GetHeader() const
 
 void APDUCommand::SetData(const string& data)
 {
-	data_length_ = data.size() / 2;
+	data_length_ = static_cast<BYTE>(data.size()) / 2;
 	data_ = data;
 }
 

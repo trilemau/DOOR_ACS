@@ -32,6 +32,8 @@
     <ClCompile Include="APDUResponse.cpp">
       <Filter>Packets</Filter>
     </ClCompile>
+    <ClCompile Include="AccessControlSystem.cpp" />
+    <ClCompile Include="Reader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\serial\serial.h">
@@ -67,6 +69,8 @@
     <ClInclude Include="APDUResponse.h">
       <Filter>Packets</Filter>
     </ClInclude>
+    <ClInclude Include="AccessControlSystem.h" />
+    <ClInclude Include="Reader.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="SerialPortLibrary">

@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccessControlSystem.cpp" />
     <ClCompile Include="APDUCommand.cpp" />
     <ClCompile Include="APDUResponse.cpp" />
     <ClCompile Include="include\serial\impl\list_ports_linux.cc" />
@@ -161,9 +162,11 @@
     <ClCompile Include="include\serial\impl\win.cc" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="Reader.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AccessControlSystem.h" />
     <ClInclude Include="APDUCommand.h" />
     <ClInclude Include="APDUResponse.h" />
     <ClInclude Include="Constants.h" />
@@ -174,6 +177,7 @@
     <ClInclude Include="include\serial\v8stdint.h" />
     <ClInclude Include="Libs.h" />
     <ClInclude Include="Packet.h" />
+    <ClInclude Include="Reader.hpp" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
