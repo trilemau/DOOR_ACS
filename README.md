@@ -15,7 +15,7 @@ The solution contains:
 ## To run:
 Both the implementation and tests are run using Microsoft Visual Studio 2022. The ASSET 622 reader has to be connected to the computer using a USB RS232 converter prior to the execution of the program. It is imperative to set the value of macro COM_PORT found in the Constants.h file to the COM port where the reader is connected to.
 
-After the start of the access control system, the reader should automatically start to constantly search for access cards or NFC-enabled smartphones. Important information about the program execution is printed in the application's console.
+After the start of the access control system, the reader should automatically start to search for access cards or NFC-enabled smartphones. Important information about the program execution is printed in the application's console.
 
 ## Authors
 Tri Le Mau
