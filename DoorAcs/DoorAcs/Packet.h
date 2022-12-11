@@ -68,21 +68,6 @@ public:
 };
 
 
-// -------- CheckPresencePacket --------
-class CheckPresencePacket : public Packet
-{
-    bool result_;
-
-public:
-    CheckPresencePacket();
-
-    string GetData() const override;
-    void ParseResponse(const vector<BYTE>& response) override;
-
-    bool GetResult() const;
-};
-
-
 // -------- ISO14443_4_TDX_Packet --------
 class ISO14443_4_TDX_Packet : public Packet
 {

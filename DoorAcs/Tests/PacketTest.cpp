@@ -114,43 +114,6 @@ TEST_CASE("SetTagTypesPacket")
     }
 }
 
-TEST_CASE("CheckPresencePacket")
-{
-    CheckPresencePacket packet;
-
-    SECTION("GetData")
-    {
-        CHECK(packet.GetPacketType() == PacketType::CHECK_PRESENCE);
-        CHECK(packet.GetCommandNumber() == "1202");
-        CHECK(packet.GetData() == "1202\r");
-    }
-
-    SECTION("ParseResponse")
-    {
-        SECTION("Invalid responses")
-        {
-            CHECK_THROWS_AS(packet.ParseResponse({ 0x00 }), runtime_error);
-            CHECK_THROWS_AS(packet.ParseResponse({ 0x00, 0x00, 0x00 }), runtime_error);
-        }
-
-        SECTION("Valid response - result true")
-        {
-            packet.ParseResponse({ 0x00, 0x01 });
-
-            CHECK(packet.GetResponseError() == PacketResponseErrorType::ERR_NONE);
-            CHECK(packet.GetResult() == true);
-        }
-
-        SECTION("Valid response - result false")
-        {
-            packet.ParseResponse({ 0x00, 0x00 });
-
-            CHECK(packet.GetResponseError() == PacketResponseErrorType::ERR_NONE);
-            CHECK(packet.GetResult() == false);
-        }
-    }
-}
-
 TEST_CASE("ISO14443_4_TDX_Packet")
 {
     SECTION("All args constructor")

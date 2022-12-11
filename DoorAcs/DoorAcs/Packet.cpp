@@ -191,44 +191,6 @@ TagType SetTagTypesPacket::GetHF() const
     return hf_;
 }
 
-// --------CheckPresencePacket--------
-CheckPresencePacket::CheckPresencePacket()
-    : Packet(PacketType::CHECK_PRESENCE, COMMAND_NUMBER_CHECK_PRESENCE)
-    , result_(false)
-{
-
-}
-
-string CheckPresencePacket::GetData() const
-{
-    stringstream ss;
-
-    ss << std::uppercase;
-    ss << GetCommandNumber();
-    ss << PACKET_CARRIEGE_RETURN;
-
-    return ss.str();
-}
-
-void CheckPresencePacket::ParseResponse(const vector<BYTE>& response)
-{
-    // Check the base of the response
-    Packet::ParseResponse(response);
-
-    // Response has to be exactly 2
-    if (response.size() != 2)
-    {
-        throw std::runtime_error("CheckPresencePacket invalid response");
-    }
-
-    result_ = response[1];
-}
-
-bool CheckPresencePacket::GetResult() const
-{
-    return result_;
-}
-
 
 // -------- ISO14443_4_TDX_Packet --------
 ISO14443_4_TDX_Packet::ISO14443_4_TDX_Packet(BYTE payload_size, const string& payload, BYTE maximum_response_size)
